@@ -45,13 +45,15 @@ The some of the data is sequential, where several images in a row will be of the
 
 I briefly optimised the `LinearSVC` hyperparameters, I found that lowering the `C` parameter to 0.01 improved performance and did not increase prediction time significantly. The algorithm was tested with both dual (default) and primal optimisation. The later was used as the accuracy produced was better and it predicted slightly faster.
 
-Below is the result of running the classifier on one of the test images. In this case I used different windows than described above as the horizon is in a very different position on the y-axis in comparison to the project video.
+Below is the result of running the classifier on one of the test images. The black squares indicate windows where the classifier predicted that there was a car. In this case I used different windows than described above as the horizon is in a very different position on the y-axis in comparison to the project video.
 
 ![Classifier run on single image][imagedetection]
 
 ## Video Implementation
 
 ### Filtering by heatmap
+
+False positives were an issue with the classifier, and so the bounding boxes were combined over several frames before they were combined, thresholded and bounding boxed to give the final detection. These steps can be seen in the image below, which is a still shot of the `VehicleDetection.run_debug` output. In the top right we can see the outlines of all the windows where the classifier detected a vehicle for the current frame. The image below is all the detected windows for the previous 50 frames. The histogram is shown in the bottom left, after thresholding, and we can see there are now only two spots which correspond to the two cars. The a bounding box is drawn around these spots to give the final detections, which are shown in the top left.
 
 ![alt text][debug]
 
@@ -64,6 +66,14 @@ The full quality project output video is included in this repository as `project
 
 # Discussion
 
-- scale the whole image, then cut out windows
-- deep learning
-- hard mining
+## Speed of prediction
+
+I didn't want to use hard mining as I felt that that was cheating, and training on the test set. So in order to get predictions with no false positives I had to sample a relatively large number of windows and window sizes. In order to compensate for this, I have multithreaded the code so that each window size is calculated in a separate process, and so I can still process 2 frames per second.
+
+**Additional points**
+- The HOG gradients were calculated on each image for each window size, given more time I would have changed the code so that these were only calculated once.
+- Each individual window was scaled to 64x64, it would have been faster if I scaled the whole image, then cut out windows of 4x64
+
+## Conclusion
+
+I am happy with the performance of the process, it is relatively fast and detects no false positives, which were a big problem in development. If working outside the confines of the project, I would like to attempt the same task but using deep learning. I think the problem is very well suited to convolutional neural networks as we are using image based detection and have quite a large amount of training data.

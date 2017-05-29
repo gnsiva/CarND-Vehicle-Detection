@@ -43,7 +43,7 @@ The `skimage.feature.hog` function was used to extract "histogram of gradient" f
 
 When choosing a classifier for this project a key requirement is that it is quick at predicting, as it has to process many windows from each video frame, and then hopefully several frames per second to be useful in the real world. I started out using a `LinearSVC` (linear support vector machine classifier) which was very fast, but not especially accurate (~96%). I then tried a random forest which improved accuracy, and recall which is especially important for correctly identifying false positives, however, it was 10x slower to predict and so couldn't be used. An `SVC` was also used with an `rbf` kernel, but this was much slower than the other two approaches.
 
-The some of the data is sequential, where several images in a row will be of the same car from different angles/lighting etc. I didn't have time to manually split these, so instead, for the car and non-car images, I took the full list and split off the test set (20%) without shuffling. 
+The some of the data is sequential, where several images in a row will be of the same car from different angles/lighting etc. I didn't have time to manually split these, so instead, for the car and non-car images, I took the full list and split off the test set (20%) without shuffling, and combined the car and non-car data sets after.
 
 I briefly optimised the `LinearSVC` hyperparameters, I found that lowering the `C` parameter to 0.01 improved performance and did not increase prediction time significantly. The algorithm was tested with both dual (default) and primal optimisation. The later was used as the accuracy produced was better and it predicted slightly faster.
 

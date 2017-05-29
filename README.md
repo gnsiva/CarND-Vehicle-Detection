@@ -20,6 +20,18 @@ The goals / steps of this project are the following:
 [resultgif]: ./output_images/result.gif
 [video1]: ./project_video_result.mp4
 
+## Data
+
+The labelled training images were taken from the GTI database and the KITTI vision benchmark suite. There were 8791 images of cars and 8967 without cars, and each image was 64x64 pixels and had 3 channels. So the dataset is relatively well balanced. Below shows a random selection of the images used, the code for generating the figure is in `figures.ipynb`.
+
+![alt text][car_notcar]
+
+
+## Sliding window search
+
+In this project we are to cut up the incoming images into several windows and apply a classifier to predict whether the window image is a car or not. The classifier will work on 64x64 images, so the windows will be resized before being fed into it. I used windows of several different sizes and varying amounts of overlap as shown in the figure below. To show the size of a single window relative to the size of the image it has been displayed in the top left corner. 
+
+![alt text][windows]
 
 ## Histogram of Oriented Gradients (HOG)
 
@@ -27,11 +39,12 @@ The goals / steps of this project are the following:
 
 ## Training a classifier
 
+When choosing a classifier for this project a key requirement is that it is quick at predicting, as it has to process many windows from each video frame, and then hopefully several frames per second to be useful in the real world. I started out using a `LinearSVC` (linear support vector machine classifier) which was very fast, but not especially accurate (~96%). I then tried a random forest which improved accuracy, and recall which is especially important for correctly identifying false positives, however, it was 10x slower to predict and so couldn't be used. An `SVC` was also used with an `rbf` kernel, but this was much slower than the other two approaches.
+
+
+
+
 ![Classifier run on single image][imagedetection]
-
-## Sliding window search
-
-![alt text][windows]
 
 ## Video Implementation
 

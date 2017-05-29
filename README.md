@@ -35,6 +35,8 @@ In this project we are to cut up the incoming images into several windows and ap
 
 ## Histogram of Oriented Gradients (HOG)
 
+The `skimage.feature.hog` function was used to extract "histogram of gradient" features from the images. This was done on each channel of the image and is shown below. I used `orient` of 9, as I didn't see much improvement when increasing it. Similarly I tried various values for `pixels_per_cell` and `cell_per_block`, and decided on values of 16 and 2 respectively. I decided not to use the RGB colour space due to the effect of changing light conditions on it. I tried a few other colour spaces and finally decided on HLS.
+
 ![Histogram of gradients features][hog]
 
 ## Training a classifier
@@ -46,6 +48,8 @@ The some of the data is sequential, where several images in a row will be of the
 I briefly optimised the `LinearSVC` hyperparameters, I found that lowering the `C` parameter to 0.01 improved performance and did not increase prediction time significantly. The algorithm was tested with both dual (default) and primal optimisation. The later was used as the accuracy produced was better and it predicted slightly faster.
 
 Below is the result of running the classifier on one of the test images. The black squares indicate windows where the classifier predicted that there was a car. In this case I used different windows than described above as the horizon is in a very different position on the y-axis in comparison to the project video.
+
+**See `train_classifier.ipynb`**
 
 ![Classifier run on single image][imagedetection]
 
@@ -61,6 +65,8 @@ False positives were an issue with the classifier, and so the bounding boxes wer
 
 The full quality project output video is included in this repository as `project_video_result.mp4`. Additionally I have displayed a gif of the video below.
 
+**See `process_video.ipynb`**
+
 ![gif of project output][resultgif]
 
 
@@ -68,7 +74,7 @@ The full quality project output video is included in this repository as `project
 
 ## Speed of prediction
 
-I didn't want to use hard mining as I felt that that was cheating, and training on the test set. So in order to get predictions with no false positives I had to sample a relatively large number of windows and window sizes. In order to compensate for this, I have multithreaded the code so that each window size is calculated in a separate process, and so I can still process 2 frames per second.
+I didn't want to use hard mining as I felt that that was cheating, and training on the test set. So in order to get predictions with no false positives I had to sample a relatively large number of windows and window sizes. In order to compensate for this, I have multithreaded the code so that each window size is calculated in a separate process, and so I can still process 2 frames per second. The multithreading code is in `process_video.ipynb` `VehicleDetection._get_boxes`
 
 **Additional points**
 - The HOG gradients were calculated on each image for each window size, given more time I would have changed the code so that these were only calculated once.
